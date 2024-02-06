@@ -556,7 +556,7 @@ def play_upside_down(): #Umgedrehte Steuerung
 
 def main_menu():
     pygame.display.set_caption("Main Menu")
-    global Todesart, Highscore1, Highscore2, loading_states, Sterne_lvl_1, Sterne_lvl_2, Highscore3, Sterne_lvl_3, Level
+    global Todesart, Highscore1, Highscore2, loading_states, Sterne_lvl_1, Sterne_lvl_2, Highscore3,  Level
 
     while True:
         
@@ -575,11 +575,9 @@ def main_menu():
                 Sterne_lvl_1 = d['Sterne_lvl_1']
             if 'Sterne_lvl_2' in d:  
                 Sterne_lvl_2 = d['Sterne_lvl_2']
-            if 'Sterne_lvl_3' in d:  
-                Sterne_lvl_3 = d['Sterne_lvl_3']
             d.close()
             loading_states = False
-            
+
         if Level == 1:
             screen.blit(Wüste_BG, (0,0))
         if Level == 2:
@@ -612,7 +610,6 @@ def main_menu():
                 if PLAY_BUTTON.checkForInput(MENU_MOUSE_POS):
                     Todesart = 0
                     button_sound.play()
-                    if Level == 3: pygame.time.set_timer(timer_event, timer_interval * 1000)
                     play()
                 if OPTIONS_BUTTON.checkForInput(MENU_MOUSE_POS):
                     button_sound.play()
@@ -672,13 +669,12 @@ def options():
         pygame.display.update()  
         
 def reset_highscore():
-    global Highscore1, Highscore2, Highscore3, Sterne_lvl_1, Sterne_lvl_2, Sterne_lvl_3
+    global Highscore1, Highscore2, Highscore3, Sterne_lvl_1, Sterne_lvl_2
     Highscore1 = str(0)
     Highscore2 = str(0)
     Highscore3 = str(0)
     Sterne_lvl_1 = 0
     Sterne_lvl_2 = 0
-    Sterne_lvl_3 = 0
     d = shelve.open('score.txt')
     d.clear()  
     d.close()
@@ -738,7 +734,15 @@ def skins():
         
         pygame.display.update() 
 
-
+def unlock_3():
+    global Sterne_lvl_1, Sterne_lvl_2, level3_is_unlocked
+    if Sterne_lvl_1 == 3 and Sterne_lvl_2 == 3: 
+        level3_is_unlocked = True
+        return level3_is_unlocked    
+    else: 
+        level3_is_unlocked = False
+        return level3_is_unlocked
+        
 def level():
     global Level, Sterne_lvl_1, Sterne_lvl_2, level3_is_unlocked
     pygame.display.set_caption("Level")
@@ -749,6 +753,7 @@ def level():
         LEVEL_TEXT = get_font(50).render("LEVEL WAHL", True, "#b68f40")
         LEVEL_RECT = LEVEL_TEXT.get_rect(center = (380, 75))
         LEVEL_MOUSE_POS = pygame.mouse.get_pos()
+        unlock_3()
 
         if Sterne_lvl_1 == 0:
             Stern1_links_rect = star_50.get_rect(center = (170,215)) #Stern links
@@ -876,17 +881,18 @@ def level():
                     Level = 2
                     #main_game.hindernisse.random_hindernisse()
             
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                if DANGER_BUTTON.checkForInput(LEVEL_MOUSE_POS):
-                    button_sound.play()
-                    Level = 3
-                    #main_game.hindernisse.random_hindernisse()
+            if level3_is_unlocked:
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    if DANGER_BUTTON.checkForInput(LEVEL_MOUSE_POS):
+                        button_sound.play()
+                        Level = 3
                 
         pygame.display.update() 
 
 
+
 def restart():
-    global es_score, Sterne_lvl_1, Sterne_lvl_2, Sterne_lvl_3
+    global es_score, Sterne_lvl_1, Sterne_lvl_2
     Fail.play()
     pygame.display.set_caption("Exit Menu")
     
@@ -1001,18 +1007,9 @@ def restart():
                     Sterne_lvl_2 = 3  
                 d = shelve.open('score.txt') 
                 d['Sterne_lvl_2'] = Sterne_lvl_2           
-                d.close()
-        
-        if Level == 3:
-            screen.blit(Wüste_BG_4, (0,0))
-            d = shelve.open('score.txt') 
-            d['Sterne_lvl_3'] = Sterne_lvl_3           
-            d.close()     
-            Sterne_zahl_Text = get_font(20).render(f'You got your second Star(s)', True, (56,74,12))  
-            Sterne_zahl_Rect = Sterne_zahl_Text.get_rect(center = (380, 160))        
-                
+                d.close() 
 
-        
+
         DEATH_MOUSE_POS = pygame.mouse.get_pos()
         DEATH_TEXT = get_font(50).render("You DIED", True, (56,74,12))
         DEATH_RECT = DEATH_TEXT.get_rect(center = (380, 75))
@@ -1120,9 +1117,8 @@ Farbe = 'Blau'
 Level = 1 ######Ändern auf 1
 Sterne_lvl_1 = 3
 Sterne_lvl_2 = 3
-Sterne_lvl_3 = 0
 es_score = 0
-level3_is_unlocked = True
+level3_is_unlocked = False
 
 countdown = 600
 #Hindernisse
@@ -1141,4 +1137,3 @@ main_menu() #Start mit dem Main Menu
 
 #To-Do
 #Desktop app
-#3. Modus wird erst angezeig, wenn 2. auf 3 Sterne
