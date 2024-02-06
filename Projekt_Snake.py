@@ -207,7 +207,7 @@ class Hindernisse:
         self.random_hindernisse() 
 
     def Hindernisse_malen(self):
-        if Level == 2:
+        if Level == 2 or Level == 3:
             i = 0 
             for hindernis in self.Hindernisliste:
                 self.Hindernis_Sprites.append(random.choice([Cactus_1, Cactus_2, Cactus_3, Cactus_4]))
@@ -217,7 +217,7 @@ class Hindernisse:
         
     
     def random_hindernisse(self):
-        if Level == 2:
+        if Level == 2 or Level == 3:
             while True:
                 self.x = random.randint(2, Anzahl_Zellen - 1)
                 self.y = random.randint(2, Anzahl_Zellen - 1)
@@ -268,7 +268,7 @@ class MAIN:
             if Körperteil == self.frucht.Fruchtliste[-2]: 
                 self.frucht.random_fruit()
         
-        if Level == 2:
+        if Level == 2 or Level == 3:
             for Körperteil in self.schlange.body[1:]:
                 if Körperteil == self.hindernisse.securepos or self.hindernisse.securepos == (self.schlange.body[0] + self.schlange.Richtung):
                     del self.hindernisse.Hindernisliste[-1]
@@ -278,31 +278,42 @@ class MAIN:
                 self.frucht.random_fruit()                            
                 
     def check_fail(self): # Schlange trifft sich selbst oder rand, Spiel wird beendet
-        global safe_score1, safe_score2, hindernis, Level
+        global safe_score1, safe_score2, safe_score3, hindernis, Level, Todesart
 
         if not 2 <= self.schlange.body[0].x < Anzahl_Zellen + 2 or not 2 <= self.schlange.body[0].y < Anzahl_Zellen +2:
             if Level == 1:
                 safe_score1 = str(len(self.schlange.body) - 3)
             elif Level == 2:
                 safe_score2 = str(len(self.schlange.body) - 3)
+            elif Level == 3:
+                safe_score3 = str(len(self.schlange.body) - 3)
             self.hindernisse.reset()
-            self.game_over()
+            self.schlange.reset()
 
-        if Level == 2:
+        if Level == 2 :
             for hindernis in self.hindernisse.Hindernisliste:
                 if hindernis == self.schlange.body[0]:
                     safe_score2 = str(len(self.schlange.body) - 3)
                     self.hindernisse.reset()
-                    self.game_over()
-            
+                    self.schlange.reset()
+                    
+        if Level == 3 :
+            for hindernis in self.hindernisse.Hindernisliste:
+                if hindernis == self.schlange.body[0]:
+                    safe_score3 = str(len(self.schlange.body) - 3)
+                    self.hindernisse.reset()
+                    self.schlange.reset()
+
         for Körperteil in self.schlange.body[1:]:
             if Körperteil == self.schlange.body[0]:
                 if Level == 1:
                     safe_score1 = str(len(self.schlange.body) - 3)
                 if Level == 2:
                     safe_score2 = str(len(self.schlange.body) - 3)
+                if Level == 3:
+                    safe_score3 = str(len(self.schlange.body) - 3)
                 self.hindernisse.reset()
-                self.game_over()
+                self.schlange.reset()
                  
 
     def Tod(self): # Schlange trifft sich selbst oder rand, Spiel wird beendet
@@ -315,14 +326,11 @@ class MAIN:
                 Todesart = 2
         
         
-        if Level == 2:
+        if Level == 2 or Level == 3:
             for hindernis in self.hindernisse.Hindernisliste:
                 if hindernis == self.schlange.body[0]:
                     Todesart = 3
 
-
-    def game_over(self):
-        self.schlange.reset()
 
     def Gras_Feld(self):
     
@@ -353,7 +361,7 @@ class MAIN:
         return current_score
 
     def Highscore(self):
-        global safe_score1, Highscore1, safe_score2, Highscore2, Level
+        global safe_score1, Highscore1, safe_score2, Highscore2, Level, Highscore3, safe_score3
 
 
         if Level == 1:
@@ -373,6 +381,15 @@ class MAIN:
                     Highscore2 = safe_score2
                     d = shelve.open('score.txt')  # here you will save the score variable   
                     d['Highscore2'] = Highscore2           # thats all, now it is saved on disk.
+                    d.close()
+                    
+        if Level == 3:
+            trophy = gold_trophy
+            Highscore = Highscore3
+            if int(safe_score3) > int(Highscore3) and Todesart != 0:
+                    Highscore3 = safe_score3
+                    d = shelve.open('score.txt')  # here you will save the score variable   
+                    d['Highscore3'] = Highscore3          # thats all, now it is saved on disk.
                     d.close()
 
 
@@ -399,8 +416,9 @@ def get_font(size): # Returns Press-Start-2P in the desired size
 
 def play():
     pygame.display.set_caption("Play")
-    global Todesart, es_score
+    global Todesart, es_score, countdown
     Todesart = 0
+    countdown = 600
     spielen = True
     while spielen: #Game loop
         es_score = str(len(main_game.schlange.body) - 3)
@@ -432,30 +450,113 @@ def play():
                 elif event.key == pygame.K_RIGHT or event.key == pygame.K_d:
                     if main_game.schlange.Richtung.x != -1:
                         main_game.schlange.Richtung = Vector2(1, 0)
-        
+                        
+            #if Level == 3 and event.type == timer_event: play_upside_down()
+                
         if Level == 1:
             screen.blit(Wüste_BG, (0,0))
         if Level == 2:
             screen.blit(Wüste_BG_2, (0,0))
+        if Level == 3:
+            screen.blit(Wüste_BG_4, (0,0))
+
+
         Feldrahmen_rect = pygame.Rect(75,75,610,610)        
         pygame.draw.rect(screen, (79, 70, 65), Feldrahmen_rect, 0) #((205,198,115),Feld_rect)
         Feld_rect = pygame.Rect(80,80,600,600)
         pygame.draw.rect(screen, (205,198,115), Feld_rect, 0) #((205,198,115),Feld_rect)
-        
+
+        if Level == 3:
+            countdown_text = get_font(40).render(f'{int(countdown/60)}', True, (255, 0, 0))
+            countdown_rect = countdown_text.get_rect(center = (690, 40))
+            screen.blit(countdown_text,countdown_rect)
+            countdown -= 1
+            if countdown <= 0:
+                play_upside_down()
+
 
         main_game.Malen()
         pygame.display.update() #Updatet nach jedem while loop
-        clock.tick(FPS) #updatet 30x pro sekunde
+        clock.tick(FPS) #updatet 60x pro sekunde
         if Todesart != 0:
             spielen = False
             restart()  
             main_game.Highscore()
+
+
+def play_upside_down(): #Umgedrehte Steuerung
+    pygame.display.set_caption("Play")
+    global Todesart, es_score, countdown
+    Todesart = 0
+    countdown = 600
+    spielen = True
+    while spielen: #Game loop
+        es_score = str(len(main_game.schlange.body) - 3)
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT: #Kontrolliert ob auf das x gedrückt wurde
+                pygame.quit() #Fenster schließen
+                sys.exit() #beendet allen Code
+            if event.type == SCREEN_UPDATE:
+                main_game.Update()
+                
+            if event.type == pygame.KEYDOWN:
+                
+                if main_game.schlange.Richtung == Vector2(0,0):
+                    if event.key == pygame.K_RIGHT or event.key == pygame.K_d:
+                        main_game.schlange.Richtung = Vector2(1, 0)
+                    
+                elif event.key == pygame.K_UP or event.key == pygame.K_w: #Steuerung
+                    if main_game.schlange.Richtung.y != -1: #Man kann nur nach oben gehen, wenn man nicht nach unten geht
+                        main_game.schlange.Richtung = Vector2(0, 1)
+
+                elif event.key == pygame.K_DOWN or event.key == pygame.K_s:
+                    if main_game.schlange.Richtung.y != 1:
+                        main_game.schlange.Richtung = Vector2(0, -1)
+
+                elif event.key == pygame.K_LEFT or event.key == pygame.K_a:
+                    if main_game.schlange.Richtung.x != -1:
+                        main_game.schlange.Richtung = Vector2(1, 0)
+                    
+                elif event.key == pygame.K_RIGHT or event.key == pygame.K_d:
+                    if main_game.schlange.Richtung.x != 1:
+                        main_game.schlange.Richtung = Vector2(-1, 0)
+                
+        if Level == 1:
+            screen.blit(Wüste_BG, (0,0))
+        if Level == 2:
+            screen.blit(Wüste_BG_2, (0,0))
+        if Level == 3:
+            screen.blit(Wüste_BG_4, (0,0))
+
+
+        Feldrahmen_rect = pygame.Rect(75,75,610,610)        
+        pygame.draw.rect(screen, (79, 70, 65), Feldrahmen_rect, 0) #((205,198,115),Feld_rect)
+        Feld_rect = pygame.Rect(80,80,600,600)
+        pygame.draw.rect(screen, (205,198,115), Feld_rect, 0) #((205,198,115),Feld_rect)
+
+        if Level == 3:
+            countdown_text = get_font(40).render(f'{int(countdown/60)}', True, (255, 0, 0))
+            countdown_rect = countdown_text.get_rect(center = (690, 40))
+            screen.blit(countdown_text,countdown_rect)
+            countdown -= 1
+            if countdown <= 0:
+                play()
+
+
+        main_game.Malen()
+        pygame.display.update() #Updatet nach jedem while loop
+        clock.tick(FPS) #updatet 60x pro sekunde
+        if Todesart != 0:
+            spielen = False
+            restart()  
+            main_game.Highscore()
+            main_game.hindernisse.random_hindernisse()
              
 
 
 def main_menu():
     pygame.display.set_caption("Main Menu")
-    global Todesart, Highscore1, Highscore2, loading_states, Sterne_lvl_1, Sterne_lvl_2
+    global Todesart, Highscore1, Highscore2, loading_states, Sterne_lvl_1, Sterne_lvl_2, Highscore3, Sterne_lvl_3, Level
 
     while True:
         
@@ -467,10 +568,15 @@ def main_menu():
             if 'Highscore2' in d:  # the score is read from disk
                 Highscore2 = d['Highscore2']
             else: Highscore2 = str(0)
+            if 'Highscore3' in d:  
+                Highscore3 = d['Highscore3']
+            else: Highscore3 = str(0)
             if 'Sterne_lvl_1' in d:
                 Sterne_lvl_1 = d['Sterne_lvl_1']
-            if 'Sterne_lvl_2' in d:  # the score is read from disk
+            if 'Sterne_lvl_2' in d:  
                 Sterne_lvl_2 = d['Sterne_lvl_2']
+            if 'Sterne_lvl_3' in d:  
+                Sterne_lvl_3 = d['Sterne_lvl_3']
             d.close()
             loading_states = False
             
@@ -478,6 +584,8 @@ def main_menu():
             screen.blit(Wüste_BG, (0,0))
         if Level == 2:
             screen.blit(Wüste_BG_2, (0,0))
+        if Level == 3:
+            screen.blit(Wüste_BG_4, (0,0))
 
         MENU_MOUSE_POS = pygame.mouse.get_pos()
         MENU_TEXT = get_font(50).render("SNAKE GAME", True, (56,74,12))
@@ -504,6 +612,7 @@ def main_menu():
                 if PLAY_BUTTON.checkForInput(MENU_MOUSE_POS):
                     Todesart = 0
                     button_sound.play()
+                    if Level == 3: pygame.time.set_timer(timer_event, timer_interval * 1000)
                     play()
                 if OPTIONS_BUTTON.checkForInput(MENU_MOUSE_POS):
                     button_sound.play()
@@ -563,11 +672,13 @@ def options():
         pygame.display.update()  
         
 def reset_highscore():
-    global Highscore2, Highscore1, Sterne_lvl_1, Sterne_lvl_2
+    global Highscore1, Highscore2, Highscore3, Sterne_lvl_1, Sterne_lvl_2, Sterne_lvl_3
     Highscore1 = str(0)
     Highscore2 = str(0)
+    Highscore3 = str(0)
     Sterne_lvl_1 = 0
     Sterne_lvl_2 = 0
+    Sterne_lvl_3 = 0
     d = shelve.open('score.txt')
     d.clear()  
     d.close()
@@ -629,7 +740,7 @@ def skins():
 
 
 def level():
-    global Level, Sterne_lvl_1, Sterne_lvl_2
+    global Level, Sterne_lvl_1, Sterne_lvl_2, level3_is_unlocked
     pygame.display.set_caption("Level")
         
     while True:  
@@ -716,18 +827,35 @@ def level():
             haekchen_level2_rect = haekchen.get_rect(center = (640, 410))
             screen.blit(haekchen, haekchen_level2_rect)
         
+        if Level == 3:
+            danger1_rect = danger_sign.get_rect(center = (492, 575))
+            danger2_rect = danger_sign.get_rect(center = (268, 575))
+            screen.blit(danger_sign, danger1_rect)
+            screen.blit(danger_sign, danger2_rect)
      
         LEVEL_BUTTON = Button(image = pygame.image.load("Hintergrund/Restart Rect.png"), pos = (230, 480), 
                             text_input = "Level 1", font = get_font(20), base_color="#d7fcd4", hovering_color = "White")
         LEVEL_BUTTON_2 = Button(image = pygame.image.load("Hintergrund/Restart Rect.png"), pos = (530, 480), 
                             text_input = "Level 2", font = get_font(20), base_color="#d7fcd4", hovering_color = "White")
-        MAIN_MENU_BUTTON = Button(image = pygame.image.load("Hintergrund/Restart Rect.png"), pos = (380, 600), 
-                            text_input = "Back", font = get_font(20), base_color="#d7fcd4", hovering_color = "White")
+        if level3_is_unlocked:
+            MAIN_MENU_BUTTON = Button(image = pygame.image.load("Hintergrund/Restart Rect.png"), pos = (380, 670), 
+                                text_input = "Back", font = get_font(20), base_color="#d7fcd4", hovering_color = "White")
+            DANGER_BUTTON = Button(image = pygame.image.load("Hintergrund/Restart Rect.png"), pos = (380, 575), 
+                              text_input = "DANGER", font = get_font(20), base_color="#d7fcd4", hovering_color = "Red")
+        else:
+            MAIN_MENU_BUTTON = Button(image = pygame.image.load("Hintergrund/Restart Rect.png"), pos = (380, 600), 
+                                text_input = "Back", font = get_font(20), base_color="#d7fcd4", hovering_color = "White")
+
 
         screen.blit(LEVEL_TEXT, LEVEL_RECT)
-        for button in [LEVEL_BUTTON, LEVEL_BUTTON_2, MAIN_MENU_BUTTON]:
-            button.changeColor(LEVEL_MOUSE_POS)
-            button.update(screen) 
+        if level3_is_unlocked:
+            for button in [LEVEL_BUTTON, LEVEL_BUTTON_2, MAIN_MENU_BUTTON, DANGER_BUTTON]:
+                button.changeColor(LEVEL_MOUSE_POS)
+                button.update(screen) 
+        else:
+            for button in [LEVEL_BUTTON, LEVEL_BUTTON_2, MAIN_MENU_BUTTON]:
+                button.changeColor(LEVEL_MOUSE_POS)
+                button.update(screen) 
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -746,13 +874,19 @@ def level():
                 if LEVEL_BUTTON_2.checkForInput(LEVEL_MOUSE_POS):
                     button_sound.play()
                     Level = 2
-                    main_game.hindernisse.random_hindernisse()
+                    #main_game.hindernisse.random_hindernisse()
+            
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if DANGER_BUTTON.checkForInput(LEVEL_MOUSE_POS):
+                    button_sound.play()
+                    Level = 3
+                    #main_game.hindernisse.random_hindernisse()
                 
         pygame.display.update() 
 
 
 def restart():
-    global es_score, Sterne_lvl_1, Sterne_lvl_2
+    global es_score, Sterne_lvl_1, Sterne_lvl_2, Sterne_lvl_3
     Fail.play()
     pygame.display.set_caption("Exit Menu")
     
@@ -865,10 +999,19 @@ def restart():
                     Sterne_zahl_Text = get_font(20).render(f'You got all 3 Star(s)', True, (56,74,12))
                     Sterne_zahl_Rect = Sterne_zahl_Text.get_rect(center = (380, 160))
                     Sterne_lvl_2 = 3  
-                
                 d = shelve.open('score.txt') 
                 d['Sterne_lvl_2'] = Sterne_lvl_2           
                 d.close()
+        
+        if Level == 3:
+            screen.blit(Wüste_BG_4, (0,0))
+            d = shelve.open('score.txt') 
+            d['Sterne_lvl_3'] = Sterne_lvl_3           
+            d.close()     
+            Sterne_zahl_Text = get_font(20).render(f'You got your second Star(s)', True, (56,74,12))  
+            Sterne_zahl_Rect = Sterne_zahl_Text.get_rect(center = (380, 160))        
+                
+
         
         DEATH_MOUSE_POS = pygame.mouse.get_pos()
         DEATH_TEXT = get_font(50).render("You DIED", True, (56,74,12))
@@ -936,9 +1079,10 @@ FPS = 60
 Todesart = 0
 Highscore1 = str(0)
 Highscore2 = str(0)
+Highscore3 = str(0)
 safe_score1 = str(0)
 safe_score2 = str(0)
-BG = pygame.image.load("Hintergrund/Background.png")
+safe_score3 = str(0)
 
 #Laden von ressourcen
 SCHRIFTART = pygame.font.Font('Fonts/font.ttf', 25)
@@ -958,11 +1102,13 @@ button_sound.set_volume(0.5)
 blau_ganze_Schlange =  pygame.image.load('Sprites/blau_ganze_Schlange.png').convert_alpha()
 grun_ganze_Schlange = pygame.image.load('Sprites/grun_ganze_Schlange.png').convert_alpha()
 haekchen = pygame.image.load('Sprites/häkchen.PNG').convert_alpha()
+danger_sign = pygame.image.load('Sprites/danger.png').convert_alpha()
 level_1 = pygame.image.load('Sprites/level_1.PNG').convert_alpha()
 level_2 = pygame.image.load('Sprites/level_2.PNG').convert_alpha()
 Wüste_BG = pygame.image.load('Hintergrund/desert.jpg').convert_alpha()
 Wüste_BG_2 = pygame.image.load('Hintergrund/desert2.jpg').convert_alpha()
 Wüste_BG_3 = pygame.image.load('Hintergrund/desert3.png').convert_alpha()
+Wüste_BG_4 = pygame.image.load('Hintergrund/desert4.jpg').convert_alpha()
 star_50 = pygame.image.load('Sprites/star_50.png').convert_alpha()
 star_50_grey = pygame.image.load('Sprites/star_50_grey.png').convert_alpha()
 star_80 = pygame.image.load('Sprites/star_80.png').convert_alpha()
@@ -971,11 +1117,14 @@ star_80_grey = pygame.image.load('Sprites/star_80_grey.png').convert_alpha()
 
 #Startoptions
 Farbe = 'Blau'
-Level = 1
-Sterne_lvl_1 = 0
-Sterne_lvl_2 = 0
+Level = 1 ######Ändern auf 1
+Sterne_lvl_1 = 3
+Sterne_lvl_2 = 3
+Sterne_lvl_3 = 0
 es_score = 0
+level3_is_unlocked = True
 
+countdown = 600
 #Hindernisse
 Start_Hindernis = Vector2(random.randint(2, Anzahl_Zellen - 1),random.randint(2, Anzahl_Zellen - 1))
 Hindernisliste = []
