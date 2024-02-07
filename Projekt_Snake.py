@@ -56,7 +56,7 @@ class Schlange:
         self.Blau_Körper_unten = pygame.image.load('Körper_Schlange\\body_vertical.png').convert_alpha()
         self.Blau_Körper_oben = pygame.image.load('Körper_Schlange\\body_vertical.png').convert_alpha()
 
-        self.oneup = pygame.mixer.Sound('Sounds\One_UP.mp3')
+        self.oneup = pygame.mixer.Sound('Sounds/1UP.mp3')
         self.oneup.set_volume(0.3)
 
  
@@ -183,7 +183,7 @@ class Frucht:
     def Frucht_malen(self):
         
         frucht_rect = pygame.Rect(int(self.Fruchtliste[-2].x * Zellengroesse), int(self.Fruchtliste[-2].y * Zellengroesse), Zellengroesse, Zellengroesse) #!!! Rect wird großgeschrieben
-        screen.blit(komische_frucht,frucht_rect)
+        screen.blit(Pilz,frucht_rect)
 
     def random_fruit(self):
             while True:
@@ -199,6 +199,10 @@ class Frucht:
 
 class Hindernisse:
     def __init__(self):
+        self.Cactus_1 = pygame.image.load('Sprites/cactus_1.png').convert_alpha()
+        self.Cactus_2 = pygame.image.load('Sprites/cactus_2.png').convert_alpha()
+        self.Cactus_3 = pygame.image.load('Sprites/cactus_3.png').convert_alpha()
+        self.Cactus_4 = pygame.image.load('Sprites/cactus_4.png').convert_alpha()
 
         self.Hindernisliste = []
         self.Hindernis_Sprites = []
@@ -210,7 +214,7 @@ class Hindernisse:
         if Level == 2 or Level == 3:
             i = 0 
             for hindernis in self.Hindernisliste:
-                self.Hindernis_Sprites.append(random.choice([Cactus_1, Cactus_2, Cactus_3, Cactus_4]))
+                self.Hindernis_Sprites.append(random.choice([self.Cactus_1, self.Cactus_2, self.Cactus_3, self.Cactus_4]))
                 hindernis_rect = pygame.Rect(int(hindernis.x * Zellengroesse), int(hindernis.y * Zellengroesse), Zellengroesse, Zellengroesse) #!!! Rect wird großgeschrieben
                 screen.blit(self.Hindernis_Sprites[i],hindernis_rect)
                 i += 1
@@ -240,6 +244,8 @@ class MAIN:
         self.schlange = Schlange()
         self.frucht = Frucht ()
         self.hindernisse = Hindernisse()
+        self.silver_trophy = pygame.image.load('Sprites/silver_trophy.png').convert_alpha()
+        self.gold_trophy = pygame.image.load('Sprites/gold_trophy.png').convert_alpha()
 
     def Update(self):
         self.schlange.Schlange_bewegen()
@@ -354,10 +360,10 @@ class MAIN:
         score_x = int(340) #Wo Score Anzeige
         score_y = int(40)
         score_rect = score_surface.get_rect(center = (score_x,score_y)) #Macht ein rectangle um den Score, und platziert mittif davon
-        frucht_rect = komische_frucht.get_rect(midright = (score_rect.left, score_rect.centery))
+        frucht_rect = Pilz.get_rect(midright = (score_rect.left, score_rect.centery))
 
         screen.blit(score_surface, score_rect)
-        screen.blit(komische_frucht, frucht_rect)
+        screen.blit(Pilz, frucht_rect)
         return current_score
 
     def Highscore(self):
@@ -367,7 +373,7 @@ class MAIN:
         if Level == 1:
 
             Highscore = Highscore1
-            trophy = silver_trophy
+            trophy = self.silver_trophy
             if int(safe_score1) > int(Highscore1) and Todesart != 0:
                 Highscore1 = safe_score1
                 d = shelve.open('score.txt')  # here you will save the score variable   
@@ -375,7 +381,7 @@ class MAIN:
                 d.close()
                 
         if Level == 2:
-            trophy = gold_trophy
+            trophy = self.gold_trophy
             Highscore = Highscore2
             if int(safe_score2) > int(Highscore2) and Todesart != 0:
                     Highscore2 = safe_score2
@@ -384,7 +390,7 @@ class MAIN:
                     d.close()
                     
         if Level == 3:
-            trophy = gold_trophy
+            trophy = self.gold_trophy
             Highscore = Highscore3
             if int(safe_score3) > int(Highscore3) and Todesart != 0:
                     Highscore3 = safe_score3
@@ -398,7 +404,7 @@ class MAIN:
         highscore_y = int(40)
 
         highscore_rect = highscore_surface.get_rect(center = (highscore_x,highscore_y)) #Macht ein rectangle um den Score, und platziert mittif davon
-        trophy_rect = silver_trophy.get_rect(midright = (highscore_rect.left, highscore_rect.centery))
+        trophy_rect = self.silver_trophy.get_rect(midright = (highscore_rect.left, highscore_rect.centery))
         screen.blit(highscore_surface, highscore_rect)
         screen.blit(trophy, trophy_rect)
 
@@ -623,6 +629,7 @@ def main_menu():
 
 def options():
     pygame.display.set_caption("Options")
+    global is_Ton_an
     
     while True:
         screen.blit(Wüste_BG_3, (0, 0))
@@ -639,8 +646,16 @@ def options():
                             text_input = "Reset", font = get_font(50), base_color="#d7fcd4", hovering_color = "White")
         MAIN_MENU_BUTTON = Button(image = pygame.image.load("Hintergrund/Options Rect.png"), pos = (380, 575), 
                     text_input = "Back", font = get_font(50), base_color="#d7fcd4", hovering_color = "White")
+        if is_Ton_an:
+            TON_BUTTON = Button(image = pygame.image.load('Sprites/Ton_an.png'), pos = (700, 715),
+                    text_input = '', font = get_font(50), base_color="#d7fcd4", hovering_color = "White")    # Ton kann aus- oder anggeschaltet werden werden
+        else:
+            TON_BUTTON = Button(image = pygame.image.load('Sprites/Ton_aus.png'), pos = (700, 715),
+                    text_input = '', font = get_font(50), base_color="#d7fcd4", hovering_color = "White")
+                            
 
-        for button in [MAIN_MENU_BUTTON, LEVEL_BUTTON, SKIN_BUTTON, RESET_BUTTON]:
+
+        for button in [MAIN_MENU_BUTTON, LEVEL_BUTTON, SKIN_BUTTON, RESET_BUTTON, TON_BUTTON]:
             button.changeColor(OPTIONS_MOUSE_POS)
             button.update(screen)
 
@@ -665,8 +680,26 @@ def options():
                 if RESET_BUTTON.checkForInput(OPTIONS_MOUSE_POS):
                     button_sound.play()
                     reset_highscore()
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if TON_BUTTON.checkForInput(OPTIONS_MOUSE_POS):
+                    button_sound.play()
+                    Ton_aendern()
 
         pygame.display.update()  
+
+def Ton_aendern():
+    global is_Ton_an
+    if is_Ton_an:
+        is_Ton_an = False
+        button_sound.set_volume(0)
+        fail_sound.set_volume(0)
+        main_game.schlange.oneup.set_volume(0)
+    else:
+        is_Ton_an = True
+        button_sound.set_volume(0.4)
+        fail_sound.set_volume(0.8)
+        main_game.schlange.oneup.set_volume(0.3)
+
         
 def reset_highscore():
     global Highscore1, Highscore2, Highscore3, Sterne_lvl_1, Sterne_lvl_2
@@ -683,6 +716,8 @@ def reset_highscore():
 def skins():
     global Farbe
     pygame.display.set_caption("Skins")
+    blau_ganze_Schlange =  pygame.image.load('Sprites/blau_ganze_Schlange.png').convert_alpha()
+    grun_ganze_Schlange = pygame.image.load('Sprites/grun_ganze_Schlange.png').convert_alpha()
     
     while True:  
         screen.blit(Wüste_BG_3, (0, 0))
@@ -746,7 +781,14 @@ def unlock_3():
 def level():
     global Level, Sterne_lvl_1, Sterne_lvl_2, level3_is_unlocked
     pygame.display.set_caption("Level")
-        
+    star_50 = pygame.image.load('Sprites/star_50.png').convert_alpha()
+    star_50_grey = pygame.image.load('Sprites/star_50_grey.png').convert_alpha()
+    star_80 = pygame.image.load('Sprites/star_80.png').convert_alpha()
+    star_80_grey = pygame.image.load('Sprites/star_80_grey.png').convert_alpha()
+
+    danger_sign = pygame.image.load('Sprites/danger.png').convert_alpha()
+    level_1 = pygame.image.load('Sprites/level_1.PNG').convert_alpha()
+    level_2 = pygame.image.load('Sprites/level_2.PNG').convert_alpha()
     while True:  
         screen.blit(Wüste_BG_3, (0, 0))
         LEVEL_MOUSE_POS = pygame.mouse.get_pos()
@@ -893,8 +935,11 @@ def level():
 
 def restart():
     global es_score, Sterne_lvl_1, Sterne_lvl_2
-    Fail.play()
+    fail_sound.play()
     pygame.display.set_caption("Exit Menu")
+    meme_suicide = pygame.image.load('Memes\eating ys.jpg').convert_alpha()
+    meme_cant_see = pygame.image.load('Memes\cant see.jpg').convert_alpha()
+    meme_cactus = pygame.image.load('Memes\cactus.jpg').convert_alpha()
     
     while True:
 
@@ -1083,34 +1128,18 @@ safe_score3 = str(0)
 
 #Laden von ressourcen
 SCHRIFTART = pygame.font.Font('Fonts/font.ttf', 25)
-meme_suicide = pygame.image.load('Memes\eating ys.jpg').convert_alpha()
-meme_cant_see = pygame.image.load('Memes\cant see.jpg').convert_alpha()
-meme_cactus = pygame.image.load('Memes\cactus.jpg').convert_alpha()
-komische_frucht = pygame.image.load('Sprites\Pilz.png').convert_alpha() #convert: ändert Bild in besseres Format für python
-silver_trophy = pygame.image.load('Sprites/silver_trophy.png').convert_alpha()
-gold_trophy = pygame.image.load('Sprites/gold_trophy.png').convert_alpha()
-Cactus_1 = pygame.image.load('Sprites/cactus_1.png').convert_alpha()
-Cactus_2 = pygame.image.load('Sprites/cactus_2.png').convert_alpha()
-Cactus_3 = pygame.image.load('Sprites/cactus_3.png').convert_alpha()
-Cactus_4 = pygame.image.load('Sprites/cactus_4.png').convert_alpha()
-Fail = pygame.mixer.Sound('Sounds\Fail.mp3')
+
+Pilz = pygame.image.load('Sprites\Pilz.png').convert_alpha() #convert: ändert Bild in besseres Format für python
+fail_sound = pygame.mixer.Sound('Sounds\Fail.mp3')
+fail_sound.set_volume(0.8)
 button_sound = pygame.mixer.Sound('Sounds/button.mp3')
-button_sound.set_volume(0.5)
-blau_ganze_Schlange =  pygame.image.load('Sprites/blau_ganze_Schlange.png').convert_alpha()
-grun_ganze_Schlange = pygame.image.load('Sprites/grun_ganze_Schlange.png').convert_alpha()
+button_sound.set_volume(0.4)
 haekchen = pygame.image.load('Sprites/häkchen.PNG').convert_alpha()
-danger_sign = pygame.image.load('Sprites/danger.png').convert_alpha()
-level_1 = pygame.image.load('Sprites/level_1.PNG').convert_alpha()
-level_2 = pygame.image.load('Sprites/level_2.PNG').convert_alpha()
 Wüste_BG = pygame.image.load('Hintergrund/desert.jpg').convert_alpha()
 Wüste_BG_2 = pygame.image.load('Hintergrund/desert2.jpg').convert_alpha()
 Wüste_BG_3 = pygame.image.load('Hintergrund/desert3.png').convert_alpha()
 Wüste_BG_4 = pygame.image.load('Hintergrund/desert4.jpg').convert_alpha()
-star_50 = pygame.image.load('Sprites/star_50.png').convert_alpha()
-star_50_grey = pygame.image.load('Sprites/star_50_grey.png').convert_alpha()
-star_80 = pygame.image.load('Sprites/star_80.png').convert_alpha()
-star_80_grey = pygame.image.load('Sprites/star_80_grey.png').convert_alpha()
-
+# # # # 
 
 #Startoptions
 Farbe = 'Blau'
@@ -1119,6 +1148,7 @@ Sterne_lvl_1 = 3
 Sterne_lvl_2 = 3
 es_score = 0
 level3_is_unlocked = False
+is_Ton_an = True
 
 countdown = 600
 #Hindernisse
@@ -1137,3 +1167,6 @@ main_menu() #Start mit dem Main Menu
 
 #To-Do
 #Desktop app
+#Ton an/aus
+#Code kürzen
+#level 3 Score suchen
