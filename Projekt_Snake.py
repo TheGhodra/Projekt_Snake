@@ -543,16 +543,9 @@ def play_upside_down(): #Umgedrehte Steuerung
             restart()  
             main_game.Highscore()
 
-             
-
-
-def main_menu():
-    pygame.display.set_caption("Main Menu")
-    global Todesart, Highscore1, Highscore2, loading_states, Sterne_lvl_1, Sterne_lvl_2, Highscore3,  Level
-    
-    while True:
-        
-        if loading_states:
+def laden():
+    global loading_states, Highscore1, Highscore2, Highscore3, Sterne_lvl_1, Sterne_lvl_2
+    if loading_states:
             d = shelve.open('score.txt')
             if 'Highscore1' in d:
                 Highscore1 = d['Highscore1']
@@ -570,6 +563,11 @@ def main_menu():
             d.close()
             loading_states = False
 
+def main_menu():
+    pygame.display.set_caption("Main Menu")
+    global Todesart
+    
+    while True:
         if Level == 1:
             screen.blit(Wüste_BG, (0,0))
         if Level == 2:
@@ -577,6 +575,8 @@ def main_menu():
         if Level == 3:
             screen.blit(Wüste_BG_4, (0,0))
 
+        laden()
+        
         MENU_MOUSE_POS = pygame.mouse.get_pos()
         MENU_TEXT = get_font(50).render("SNAKE GAME", True, (56,74,12))
         MENU_RECT = MENU_TEXT.get_rect(center = (380, 100))
@@ -900,7 +900,7 @@ def level():
                         button_sound.play()
                         Level = 3
                 
-        pygame.display.update() 
+        pygame.display.update()     
 
 def restart():
     global es_score, Sterne_lvl_1, Sterne_lvl_2
@@ -911,123 +911,56 @@ def restart():
     meme_cactus = pygame.image.load('Memes\cactus.jpg').convert_alpha()
     
     while True:
-        if Level == 1:
-            Anzahl_Sterne_1 = int(int(es_score)/10)
-            screen.blit(Wüste_BG, (0,0))
-            if Sterne_lvl_1 == 0:
-                if Anzahl_Sterne_1 == 0:
-                    Sterne_zahl_Text = get_font(20).render(f'You need {10-int(es_score)} points more for 1 star', True, (56,74,12))
-                    Sterne_zahl_Rect = Sterne_zahl_Text.get_rect(center = (380, 160))
-                if Anzahl_Sterne_1 == 1:
-                    Sterne_zahl_Text = get_font(20).render(f'You got your second Star(s)', True, (56,74,12))
-                    Sterne_zahl_Rect = Sterne_zahl_Text.get_rect(center = (380, 160))
-                    Sterne_lvl_1 = Anzahl_Sterne_1
-                elif Anzahl_Sterne_1 == 2:
-                    Sterne_zahl_Text = get_font(20).render(f'You got your second Star', True, (56,74,12))
-                    Sterne_zahl_Rect = Sterne_zahl_Text.get_rect(center = (380, 160))
-                    Sterne_lvl_1 = 2
-                elif Anzahl_Sterne_1 >= 3:
-                    Sterne_zahl_Text = get_font(20).render(f'You got all 3 Stars. Congratulations', True, (56,74,12))
-                    Sterne_zahl_Rect = Sterne_zahl_Text.get_rect(center = (380, 160))
-                    Sterne_lvl_1 = 3
-                
-                d = shelve.open('score.txt')  #Abspeichern in datei
-                d['Sterne_lvl_1'] = Sterne_lvl_1           
-                d.close()
-                
-            elif Sterne_lvl_1 == 1:
-                
-                if Anzahl_Sterne_1 <= 1:
-                    Sterne_zahl_Text = get_font(20).render(f'You need {20-int(es_score)} points more for 2 stars', True, (56,74,12))
-                    Sterne_zahl_Rect = Sterne_zahl_Text.get_rect(center = (380, 160))
+        if Level == 1: screen.blit(Wüste_BG,(0,0))
+        elif Level == 2: screen.blit(Wüste_BG_2,(0,0))
+        else: screen.blit(Wüste_BG_4,(0,0))
 
-                elif Anzahl_Sterne_1 == 2:
-                    Sterne_zahl_Text = get_font(20).render(f'You got your second Star', True, (56,74,12))
-                    Sterne_zahl_Rect = Sterne_zahl_Text.get_rect(center = (380, 160))
-                    Sterne_lvl_1 = 2
-                elif Anzahl_Sterne_1 >= 3:
-                    Sterne_zahl_Text = get_font(20).render(f'You got all 3 Star(s). Congratulations', True, (56,74,12))
-                    Sterne_zahl_Rect = Sterne_zahl_Text.get_rect(center = (380, 160))
-                    Sterne_lvl_1 = 3
-                
-                d = shelve.open('score.txt') 
-                d['Sterne_lvl_1'] = Sterne_lvl_1           
-                d.close()
-                
-            elif Sterne_lvl_1 >= 2:
-                if Anzahl_Sterne_1 < 3:
-                    Sterne_zahl_Text = get_font(20).render(f'You need {30-int(es_score)} points more for 3 stars', True, (56,74,12))
-                    Sterne_zahl_Rect = Sterne_zahl_Text.get_rect(center = (380, 160))
-                if Anzahl_Sterne_1 > 2:
-                    Sterne_zahl_Text = get_font(20).render(f'You got all 3 Star(s)', True, (56,74,12))
-                    Sterne_zahl_Rect = Sterne_zahl_Text.get_rect(center = (380, 160))
-                    Sterne_lvl_1 = 3
-                
-                d = shelve.open('score.txt') 
-                d['Sterne_lvl_1'] = Sterne_lvl_1           
-                d.close()
-
-        if Level == 2:
-            Anzahl_Sterne_2 = int(int(es_score)/10)
-            screen.blit(Wüste_BG_2, (0,0))
-            
-            if Sterne_lvl_2 == 0:
-                if Anzahl_Sterne_2 == 0:
-                    Sterne_zahl_Text = get_font(20).render(f'You need {10-int(es_score)} points more for 1 star', True, (56,74,12))
-                    Sterne_zahl_Rect = Sterne_zahl_Text.get_rect(center = (380, 160))
-                if Anzahl_Sterne_2 == 1:
-                    Sterne_zahl_Text = get_font(20).render(f'You got your first Star(s)', True, (56,74,12))
-                    Sterne_zahl_Rect = Sterne_zahl_Text.get_rect(center = (380, 160))
-                    Sterne_lvl_2 = Anzahl_Sterne_2
-                elif Anzahl_Sterne_2 == 2:
-                    Sterne_zahl_Text = get_font(20).render(f'You got your second Star', True, (56,74,12))
-                    Sterne_zahl_Rect = Sterne_zahl_Text.get_rect(center = (380, 160))
-                    Sterne_lvl_2 = 2
-                elif Anzahl_Sterne_2 >= 3:
-                    Sterne_zahl_Text = get_font(20).render(f'You got all 3 Star(s). Congratulations', True, (56,74,12))
-                    Sterne_zahl_Rect = Sterne_zahl_Text.get_rect(center = (380, 160))
-                    Sterne_lvl_2 = 3
-                
-                d = shelve.open('score.txt') 
-                d['Sterne_lvl_2'] = Sterne_lvl_2           
-                d.close()
-                
-            elif Sterne_lvl_2 == 1:
-                if Anzahl_Sterne_2 <= 1:
-                    Sterne_zahl_Text = get_font(20).render(f'You need {20-int(es_score)} points more for 2 stars', True, (56,74,12))
-                    Sterne_zahl_Rect = Sterne_zahl_Text.get_rect(center = (380, 160))
-
-                elif Anzahl_Sterne_2 == 2:
-                    Sterne_zahl_Text = get_font(20).render(f'You got your second Star', True, (56,74,12))
-                    Sterne_zahl_Rect = Sterne_zahl_Text.get_rect(center = (380, 160))
-                    Sterne_lvl_2 = 2
-                elif Anzahl_Sterne_2 >= 3:
-                    Sterne_zahl_Text = get_font(20).render(f'You got all 3 Star(s). Congratulations', True, (56,74,12))
-                    Sterne_zahl_Rect = Sterne_zahl_Text.get_rect(center = (380, 160))
-                    Sterne_lvl_2 = 3
-                
-                d = shelve.open('score.txt') 
-                d['Sterne_lvl_2'] = Sterne_lvl_2           
-                d.close()
-                
-            elif Sterne_lvl_2 >= 2:
-                if Anzahl_Sterne_2 < 3:
-                    Sterne_zahl_Text = get_font(20).render(f'You need {30-int(es_score)} points more for 3 stars', True, (56,74,12))
-                    Sterne_zahl_Rect = Sterne_zahl_Text.get_rect(center = (380, 160))
-                if Anzahl_Sterne_2 > 2:
-                    Sterne_zahl_Text = get_font(20).render(f'You got all 3 Star(s)', True, (56,74,12))
-                    Sterne_zahl_Rect = Sterne_zahl_Text.get_rect(center = (380, 160))
-                    Sterne_lvl_2 = 3  
-                d = shelve.open('score.txt') 
-                d['Sterne_lvl_2'] = Sterne_lvl_2           
-                d.close() 
-
-        DEATH_MOUSE_POS = pygame.mouse.get_pos()
         DEATH_TEXT = get_font(50).render("You DIED", True, (56,74,12))
         DEATH_RECT = DEATH_TEXT.get_rect(center = (380, 75))
-        
+        screen.blit(DEATH_TEXT, DEATH_RECT)
+
         STAR_TEXT = get_font(20).render(f'You achieved a score of {es_score}', True, (56,74,12))
-        STAR_TEXT_RECT = STAR_TEXT.get_rect(center = (380, 120))               
+        STAR_TEXT_RECT = STAR_TEXT.get_rect(center = (380, 120))
+        screen.blit(STAR_TEXT, STAR_TEXT_RECT) 
+      
+        Anzahl_Sterne = int(int(es_score)/10)
+        bis_1_stern_Text = get_font(17).render(f'You need {10-int(es_score)} points more for 1 star', True, (56,74,12))
+        bis_1_stern_rect = bis_1_stern_Text.get_rect(center = (380, 160))
+        bis_2_stern_Text = get_font(17).render(f'You need {20-int(es_score)} points more for 2 stars', True, (56,74,12))
+        bis_2_stern_rect = bis_2_stern_Text.get_rect(center = (380, 160))
+        bis_3_stern_Text = get_font(17).render(f'You need {30-int(es_score)} points more for 3 stars', True, (56,74,12))
+        bis_3_stern_rect = bis_3_stern_Text.get_rect(center = (380, 160))                          
+        drei_bekommen_Text = get_font(17).render(f'You got your third Star. Congratulations!', True, (56,74,12))
+        drei_bekommen_rect = drei_bekommen_Text.get_rect(center = (380, 160))   
+
+        if Level == 1:
+            if Sterne_lvl_1 == 0 and Anzahl_Sterne == 0: screen.blit(bis_1_stern_Text, bis_1_stern_rect)
+            elif (Sterne_lvl_1 == 1 and Anzahl_Sterne <= 1): screen.blit(bis_2_stern_Text, bis_2_stern_rect)
+            elif Sterne_lvl_1 == 2 and Anzahl_Sterne <= 2: screen.blit(bis_3_stern_Text, bis_3_stern_rect)
+            elif Sterne_lvl_1 == 0 and Anzahl_Sterne == 1: Sterne_lvl_1 = 1
+            elif Sterne_lvl_1 == 0 and Anzahl_Sterne == 2: Sterne_lvl_1 = 2
+            elif Sterne_lvl_1 == 0 and Anzahl_Sterne == 3: Sterne_lvl_1 = 3
+            elif Sterne_lvl_1 == 1 and Anzahl_Sterne == 2: Sterne_lvl_1 = 2
+            elif Sterne_lvl_1 == 1 and Anzahl_Sterne == 3: Sterne_lvl_1 = 3
+            elif Sterne_lvl_1 == 2 and Anzahl_Sterne == 3: Sterne_lvl_1 = 3
+            elif Sterne_lvl_1 == 3: screen.blit(drei_bekommen_Text,drei_bekommen_rect)
+       
+        if Level == 2:
+            if Sterne_lvl_2 == 0 and Anzahl_Sterne == 0: screen.blit(bis_1_stern_Text, bis_1_stern_rect)
+            elif Sterne_lvl_2 == 1 and Anzahl_Sterne <= 1: screen.blit(bis_2_stern_Text, bis_2_stern_rect)
+            elif Sterne_lvl_2 == 2 and Anzahl_Sterne <= 2: screen.blit(bis_3_stern_Text, bis_3_stern_rect)
+            elif Sterne_lvl_2 == 3: screen.blit(drei_bekommen_rect,drei_bekommen_rect)
+            elif Sterne_lvl_2 == 0 and Anzahl_Sterne == 1: Sterne_lvl_2 = 1
+            elif Sterne_lvl_2 == 0 and Anzahl_Sterne == 2: Sterne_lvl_2 = 2
+            elif Sterne_lvl_2 == 0 and Anzahl_Sterne == 3: Sterne_lvl_2 = 3
+            elif Sterne_lvl_2 == 1 and Anzahl_Sterne == 2: Sterne_lvl_2 = 2
+            elif Sterne_lvl_2 == 1 and Anzahl_Sterne == 3: Sterne_lvl_2 = 3
+            elif Sterne_lvl_2 == 2 and Anzahl_Sterne == 3: Sterne_lvl_2 = 3
+                
+        d = shelve.open('score.txt')  #Abspeichern in datei
+        d['Sterne_lvl_1'] = Sterne_lvl_1
+        d['Sterne_lvl_2'] = Sterne_lvl_2             
+        d.close()
 
         if Todesart == 1: #cant see
             MEME_RECT = meme_cant_see.get_rect(center = (380, 415))
@@ -1046,9 +979,7 @@ def restart():
         QUIT_BUTTON = Button(image = pygame.image.load("Hintergrund/Restart Rect.png"), pos = (585, 700), 
                             text_input = "Quit", font = get_font(20), base_color = "#d7fcd4", hovering_color = "White")
         
-        screen.blit(DEATH_TEXT, DEATH_RECT)
-        screen.blit(STAR_TEXT, STAR_TEXT_RECT)
-        screen.blit(Sterne_zahl_Text, Sterne_zahl_Rect)
+        DEATH_MOUSE_POS = pygame.mouse.get_pos()
         for button in [RESTART_BUTTON, MAIN_MENU_BUTTON, QUIT_BUTTON]:
             button.changeColor(DEATH_MOUSE_POS)
             button.update(screen)
@@ -1064,6 +995,7 @@ def restart():
                 if RESTART_BUTTON.checkForInput(DEATH_MOUSE_POS):
                     button_sound.play()
                     main_game.hindernisse.random_hindernisse()
+                    Sterne_lvl_1 = int(es_score)
                     play()
                 if MAIN_MENU_BUTTON.checkForInput(DEATH_MOUSE_POS):
                     button_sound.play()
@@ -1137,6 +1069,4 @@ main_menu() #Start mit dem Main Menu
 
 #To-Do
 #Desktop app
-#Ton an/aus
-#Code kürzen
 #level 3 Score suchen
