@@ -199,10 +199,7 @@ class Frucht:
 
 class Hindernisse:
     def __init__(self):
-        self.Cactus_1 = pygame.image.load('Sprites/cactus_1.png').convert_alpha()
-        self.Cactus_2 = pygame.image.load('Sprites/cactus_2.png').convert_alpha()
-        self.Cactus_3 = pygame.image.load('Sprites/cactus_3.png').convert_alpha()
-        self.Cactus_4 = pygame.image.load('Sprites/cactus_4.png').convert_alpha()
+ 
 
         self.Hindernisliste = []
         self.Hindernis_Sprites = []
@@ -210,11 +207,12 @@ class Hindernisse:
         self.frucht = Frucht()
         self.random_hindernisse() 
 
+
     def Hindernisse_malen(self):
         if Level == 2 or Level == 3:
             i = 0 
             for hindernis in self.Hindernisliste:
-                self.Hindernis_Sprites.append(random.choice([self.Cactus_1, self.Cactus_2, self.Cactus_3, self.Cactus_4]))
+                self.Hindernis_Sprites.append(random.choice([Cactus_1, Cactus_2, Cactus_3, Cactus_4]))
                 hindernis_rect = pygame.Rect(int(hindernis.x * Zellengroesse), int(hindernis.y * Zellengroesse), Zellengroesse, Zellengroesse) #!!! Rect wird großgeschrieben
                 screen.blit(self.Hindernis_Sprites[i],hindernis_rect)
                 i += 1
@@ -237,7 +235,6 @@ class Hindernisse:
         global Hindernisliste
         if Todesart != 0:
             self.Hindernisliste = []
-            self.random_hindernisse()
 
 class MAIN:
     def __init__(self):
@@ -408,15 +405,6 @@ class MAIN:
         screen.blit(highscore_surface, highscore_rect)
         screen.blit(trophy, trophy_rect)
 
-
-
-    def Levelwahl(self):
-        if Level == 1:
-            self.frucht.Fruchtliste = []
-        elif Level == 2:
-            self.hindernisse.random_hindernisse()
-        
-
 def get_font(size): # Returns Press-Start-2P in the desired size
     return pygame.font.Font("Fonts/font.ttf", size)
 
@@ -456,8 +444,6 @@ def play():
                 elif event.key == pygame.K_RIGHT or event.key == pygame.K_d:
                     if main_game.schlange.Richtung.x != -1:
                         main_game.schlange.Richtung = Vector2(1, 0)
-                        
-            #if Level == 3 and event.type == timer_event: play_upside_down()
                 
         if Level == 1:
             screen.blit(Wüste_BG, (0,0))
@@ -468,9 +454,9 @@ def play():
 
 
         Feldrahmen_rect = pygame.Rect(75,75,610,610)        
-        pygame.draw.rect(screen, (79, 70, 65), Feldrahmen_rect, 0) #((205,198,115),Feld_rect)
+        pygame.draw.rect(screen, (79, 70, 65), Feldrahmen_rect, 0)
         Feld_rect = pygame.Rect(80,80,600,600)
-        pygame.draw.rect(screen, (205,198,115), Feld_rect, 0) #((205,198,115),Feld_rect)
+        pygame.draw.rect(screen, (205,198,115), Feld_rect, 0)
 
         if Level == 3:
             countdown_text = get_font(40).render(f'{int(countdown/60)}', True, (255, 0, 0))
@@ -556,14 +542,14 @@ def play_upside_down(): #Umgedrehte Steuerung
             spielen = False
             restart()  
             main_game.Highscore()
-            main_game.hindernisse.random_hindernisse()
+
              
 
 
 def main_menu():
     pygame.display.set_caption("Main Menu")
     global Todesart, Highscore1, Highscore2, loading_states, Sterne_lvl_1, Sterne_lvl_2, Highscore3,  Level
-
+    
     while True:
         
         if loading_states:
@@ -616,6 +602,7 @@ def main_menu():
                 if PLAY_BUTTON.checkForInput(MENU_MOUSE_POS):
                     Todesart = 0
                     button_sound.play()
+                    main_game.hindernisse.random_hindernisse()
                     play()
                 if OPTIONS_BUTTON.checkForInput(MENU_MOUSE_POS):
                     button_sound.play()
@@ -652,7 +639,6 @@ def options():
         else:
             TON_BUTTON = Button(image = pygame.image.load('Sprites/Ton_aus.png'), pos = (700, 715),
                     text_input = '', font = get_font(50), base_color="#d7fcd4", hovering_color = "White")
-                            
 
 
         for button in [MAIN_MENU_BUTTON, LEVEL_BUTTON, SKIN_BUTTON, RESET_BUTTON, TON_BUTTON]:
@@ -777,83 +763,54 @@ def unlock_3():
     else: 
         level3_is_unlocked = False
         return level3_is_unlocked
-        
-def level():
-    global Level, Sterne_lvl_1, Sterne_lvl_2, level3_is_unlocked
-    pygame.display.set_caption("Level")
+
+def Sternanzeige():
+    global Sterne_lvl_1, Sterne_lvl_2
     star_50 = pygame.image.load('Sprites/star_50.png').convert_alpha()
     star_50_grey = pygame.image.load('Sprites/star_50_grey.png').convert_alpha()
     star_80 = pygame.image.load('Sprites/star_80.png').convert_alpha()
     star_80_grey = pygame.image.load('Sprites/star_80_grey.png').convert_alpha()
 
-    danger_sign = pygame.image.load('Sprites/danger.png').convert_alpha()
-    level_1 = pygame.image.load('Sprites/level_1.PNG').convert_alpha()
-    level_2 = pygame.image.load('Sprites/level_2.PNG').convert_alpha()
-    while True:  
-        screen.blit(Wüste_BG_3, (0, 0))
-        LEVEL_MOUSE_POS = pygame.mouse.get_pos()
-        LEVEL_TEXT = get_font(50).render("LEVEL WAHL", True, "#b68f40")
-        LEVEL_RECT = LEVEL_TEXT.get_rect(center = (380, 75))
-        LEVEL_MOUSE_POS = pygame.mouse.get_pos()
-        unlock_3()
+    #Alle Sterne grau
+    Stern1_links_rect = star_50.get_rect(center = (170,215)) #Stern links
+    screen.blit(star_50_grey,Stern1_links_rect)
+    Stern1_rechts_rect = star_50.get_rect(center = (290,215)) #Stern rechts
+    screen.blit(star_50_grey,Stern1_rechts_rect)
+    Stern1_mitte_rect = star_80.get_rect(center = (230,200)) #Stern Mitte
+    screen.blit(star_80_grey,Stern1_mitte_rect)
 
-        if Sterne_lvl_1 == 0:
-            Stern1_links_rect = star_50.get_rect(center = (170,215)) #Stern links
-            screen.blit(star_50_grey,Stern1_links_rect)
-            Stern1_rechts_rect = star_50.get_rect(center = (290,215)) #Stern rechts
-            screen.blit(star_50_grey,Stern1_rechts_rect)
-            Stern1_mitte_rect = star_80.get_rect(center = (230,200)) #Stern Mitte
-            screen.blit(star_80_grey,Stern1_mitte_rect)
+    Stern2_links_rect = star_50.get_rect(center = (470,215)) #Stern links
+    screen.blit(star_50_grey,Stern2_links_rect)
+    Stern2_rechts_rect = star_50.get_rect(center = (590,215)) #Stern rechts
+    screen.blit(star_50_grey,Stern2_rechts_rect)
+    Stern2_mitte_rect = star_80.get_rect(center = (530,200)) #Stern Mitte
+    screen.blit(star_80_grey,Stern2_mitte_rect)
 
-        elif Sterne_lvl_1 == 1:
-            Stern1_links_rect = star_50.get_rect(center = (170,215))
-            screen.blit(star_50,Stern1_links_rect)
-            Stern1_rechts_rect = star_50.get_rect(center = (290,215))
-            screen.blit(star_50_grey,Stern1_rechts_rect)
-            Stern1_mitte_rect = star_80.get_rect(center = (230,200))
-            screen.blit(star_80_grey,Stern1_mitte_rect)
-
-        elif Sterne_lvl_1 == 2:
-            Stern1_links_rect = star_50.get_rect(center = (170,215))
-            screen.blit(star_50,Stern1_links_rect)
-            Stern1_rechts_rect = star_50.get_rect(center = (290,215))
-            screen.blit(star_50,Stern1_rechts_rect)
-            Stern1_mitte_rect = star_80.get_rect(center = (230,200))
-            screen.blit(star_80_grey,Stern1_mitte_rect)
-
-        elif Sterne_lvl_1 == 3:
-            Stern1_links_rect = star_50.get_rect(center = (170,215))
-            screen.blit(star_50,Stern1_links_rect)
-            Stern1_rechts_rect = star_50.get_rect(center = (290,215))
-            screen.blit(star_50,Stern1_rechts_rect)
-            Stern1_mitte_rect = star_80.get_rect(center = (230,200))
-            screen.blit(star_80,Stern1_mitte_rect)
-
-        if Sterne_lvl_2 == 0:
-            Stern2_links_rect = star_50.get_rect(center = (470,215)) #Stern links
-            screen.blit(star_50_grey,Stern2_links_rect)
-            Stern2_rechts_rect = star_50.get_rect(center = (590,215)) #Stern rechts
-            screen.blit(star_50_grey,Stern2_rechts_rect)
-            Stern2_mitte_rect = star_80.get_rect(center = (530,200)) #Stern Mitte
-            screen.blit(star_80_grey,Stern2_mitte_rect)
-
-        elif Sterne_lvl_2 == 1:
+    if Sterne_lvl_1 == 1:
+        Stern1_links_rect = star_50.get_rect(center = (170,215))
+        screen.blit(star_50,Stern1_links_rect)
+    elif Sterne_lvl_1 == 2:
+        Stern1_links_rect = star_50.get_rect(center = (170,215))
+        screen.blit(star_50,Stern1_links_rect)
+        Stern1_rechts_rect = star_50.get_rect(center = (290,215))
+        screen.blit(star_50,Stern1_rechts_rect)
+    elif Sterne_lvl_1 == 3:
+        Stern1_links_rect = star_50.get_rect(center = (170,215))
+        screen.blit(star_50,Stern1_links_rect)
+        Stern1_rechts_rect = star_50.get_rect(center = (290,215))
+        screen.blit(star_50,Stern1_rechts_rect)
+        Stern1_mitte_rect = star_80.get_rect(center = (230,200))
+        screen.blit(star_80,Stern1_mitte_rect)
+    
+    if Sterne_lvl_2 == 1:
             Stern2_links_rect = star_50.get_rect(center = (470,215))
             screen.blit(star_50,Stern2_links_rect)
-            Stern2_rechts_rect = star_50.get_rect(center = (590,215))
-            screen.blit(star_50_grey,Stern2_rechts_rect)
-            Stern2_mitte_rect = star_80.get_rect(center = (530,200))
-            screen.blit(star_80_grey,Stern2_mitte_rect)
-
-        elif Sterne_lvl_2 == 2:
+    elif Sterne_lvl_2 == 2:
             Stern2_links_rect = star_50.get_rect(center = (470,215))
             screen.blit(star_50,Stern2_links_rect)
             Stern2_rechts_rect = star_50.get_rect(center = (590,215))
             screen.blit(star_50,Stern2_rechts_rect)
-            Stern2_mitte_rect = star_80.get_rect(center = (530,200))
-            screen.blit(star_80_grey,Stern2_mitte_rect)
-            
-        elif Sterne_lvl_2 == 3:
+    elif Sterne_lvl_2 == 3:
             Stern2_links_rect = star_50.get_rect(center = (470,215))
             screen.blit(star_50,Stern2_links_rect)
             Stern2_rechts_rect = star_50.get_rect(center = (590,215))
@@ -861,6 +818,21 @@ def level():
             Stern2_mitte_rect = star_80.get_rect(center = (530,200))
             screen.blit(star_80,Stern2_mitte_rect)
 
+def level():
+    global Level, Sterne_lvl_1, Sterne_lvl_2, level3_is_unlocked
+    pygame.display.set_caption("Level")
+    danger_sign = pygame.image.load('Sprites/danger.png').convert_alpha()
+    level_1 = pygame.image.load('Sprites/level_1.PNG').convert_alpha()
+    level_2 = pygame.image.load('Sprites/level_2.PNG').convert_alpha()
+
+    while True:  
+        screen.blit(Wüste_BG_3, (0, 0))
+        LEVEL_MOUSE_POS = pygame.mouse.get_pos()
+        LEVEL_TEXT = get_font(50).render("LEVEL WAHL", True, "#b68f40")
+        LEVEL_RECT = LEVEL_TEXT.get_rect(center = (380, 75))
+        LEVEL_MOUSE_POS = pygame.mouse.get_pos()
+        unlock_3()
+        Sternanzeige()
 
         level1_rect = level_1.get_rect(center = (230, 330))
         screen.blit(level_1, level1_rect)
@@ -921,7 +893,6 @@ def level():
                 if LEVEL_BUTTON_2.checkForInput(LEVEL_MOUSE_POS):
                     button_sound.play()
                     Level = 2
-                    #main_game.hindernisse.random_hindernisse()
             
             if level3_is_unlocked:
                 if event.type == pygame.MOUSEBUTTONDOWN:
@@ -930,8 +901,6 @@ def level():
                         Level = 3
                 
         pygame.display.update() 
-
-
 
 def restart():
     global es_score, Sterne_lvl_1, Sterne_lvl_2
@@ -942,7 +911,6 @@ def restart():
     meme_cactus = pygame.image.load('Memes\cactus.jpg').convert_alpha()
     
     while True:
-
         if Level == 1:
             Anzahl_Sterne_1 = int(int(es_score)/10)
             screen.blit(Wüste_BG, (0,0))
@@ -959,7 +927,7 @@ def restart():
                     Sterne_zahl_Rect = Sterne_zahl_Text.get_rect(center = (380, 160))
                     Sterne_lvl_1 = 2
                 elif Anzahl_Sterne_1 >= 3:
-                    Sterne_zahl_Text = get_font(20).render(f'You got all 3 Star(s). Congratulations', True, (56,74,12))
+                    Sterne_zahl_Text = get_font(20).render(f'You got all 3 Stars. Congratulations', True, (56,74,12))
                     Sterne_zahl_Rect = Sterne_zahl_Text.get_rect(center = (380, 160))
                     Sterne_lvl_1 = 3
                 
@@ -1054,14 +1022,12 @@ def restart():
                 d['Sterne_lvl_2'] = Sterne_lvl_2           
                 d.close() 
 
-
         DEATH_MOUSE_POS = pygame.mouse.get_pos()
         DEATH_TEXT = get_font(50).render("You DIED", True, (56,74,12))
         DEATH_RECT = DEATH_TEXT.get_rect(center = (380, 75))
         
         STAR_TEXT = get_font(20).render(f'You achieved a score of {es_score}', True, (56,74,12))
-        STAR_TEXT_RECT = STAR_TEXT.get_rect(center = (380, 120))
-                
+        STAR_TEXT_RECT = STAR_TEXT.get_rect(center = (380, 120))               
 
         if Todesart == 1: #cant see
             MEME_RECT = meme_cant_see.get_rect(center = (380, 415))
@@ -1097,6 +1063,7 @@ def restart():
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if RESTART_BUTTON.checkForInput(DEATH_MOUSE_POS):
                     button_sound.play()
+                    main_game.hindernisse.random_hindernisse()
                     play()
                 if MAIN_MENU_BUTTON.checkForInput(DEATH_MOUSE_POS):
                     button_sound.play()
@@ -1139,7 +1106,10 @@ Wüste_BG = pygame.image.load('Hintergrund/desert.jpg').convert_alpha()
 Wüste_BG_2 = pygame.image.load('Hintergrund/desert2.jpg').convert_alpha()
 Wüste_BG_3 = pygame.image.load('Hintergrund/desert3.png').convert_alpha()
 Wüste_BG_4 = pygame.image.load('Hintergrund/desert4.jpg').convert_alpha()
-# # # # 
+Cactus_1 = pygame.image.load('Sprites/cactus_1.png').convert_alpha()
+Cactus_2 = pygame.image.load('Sprites/cactus_2.png').convert_alpha()
+Cactus_3 = pygame.image.load('Sprites/cactus_3.png').convert_alpha()
+Cactus_4 = pygame.image.load('Sprites/cactus_4.png').convert_alpha()
 
 #Startoptions
 Farbe = 'Blau'
