@@ -41,7 +41,7 @@ class Schlange:
         self.Blau_Kopf_oben = pygame.image.load('Körper_Schlange\head_down.png').convert_alpha()
         self.Blau_Kopf_unten = pygame.image.load('Körper_Schlange\head_up.png').convert_alpha()
 
-        self.Blau_Körper_LO = pygame.image.load('Körper_Schlange\\body_bottomright.png').convert_alpha()                 # kreiert die Körperanimation
+        self.Blau_Körper_LO = pygame.image.load('Körper_Schlange\\body_bottomright.png').convert_alpha()   # kreiert die Körperanimation
         self.Blau_Körper_RO = pygame.image.load('Körper_Schlange\\body_bottomleft.png').convert_alpha()
         self.Blau_Körper_LU = pygame.image.load('Körper_Schlange\\body_topright.png').convert_alpha()
         self.Blau_Körper_RU = pygame.image.load('Körper_Schlange\\body_topleft.png').convert_alpha()
@@ -182,7 +182,7 @@ class Frucht:
         
     def Frucht_malen(self):
         
-        frucht_rect = pygame.Rect(int(self.Fruchtliste[-2].x * Zellengroesse), int(self.Fruchtliste[-2].y * Zellengroesse), Zellengroesse, Zellengroesse) #!!! Rect wird großgeschrieben
+        frucht_rect = pygame.Rect(int(self.Fruchtliste[-2].x * Zellengroesse), int(self.Fruchtliste[-2].y * Zellengroesse), Zellengroesse, Zellengroesse) 
         screen.blit(Pilz,frucht_rect)
 
     def random_fruit(self):
@@ -213,7 +213,7 @@ class Hindernisse:
             i = 0 
             for hindernis in self.Hindernisliste:
                 self.Hindernis_Sprites.append(random.choice([Cactus_1, Cactus_2, Cactus_3, Cactus_4]))
-                hindernis_rect = pygame.Rect(int(hindernis.x * Zellengroesse), int(hindernis.y * Zellengroesse), Zellengroesse, Zellengroesse) #!!! Rect wird großgeschrieben
+                hindernis_rect = pygame.Rect(int(hindernis.x * Zellengroesse), int(hindernis.y * Zellengroesse), Zellengroesse, Zellengroesse)
                 screen.blit(self.Hindernis_Sprites[i],hindernis_rect)
                 i += 1
         
@@ -338,7 +338,7 @@ class MAIN:
 
     def Gras_Feld(self):
     
-        GRAS_FARBE = (240,230,140) # #159,24,18 
+        GRAS_FARBE = (240,230,140)
         for Zeile in range(Anzahl_Zellen):
             if Zeile % 2 == 0:
                 for Zelle in range(Anzahl_Zellen):
@@ -374,7 +374,7 @@ class MAIN:
             trophy = self.silver_trophy
             if int(safe_score1) > int(Highscore1) and Todesart != 0:
                 Highscore1 = safe_score1
-                d = shelve.open('score.txt')  # here you will save the score variable   
+                d = shelve.open('score.txt')  
                 d['Highscore1'] = Highscore1  
                 d.close()
                 
@@ -392,8 +392,8 @@ class MAIN:
             Highscore = Highscore3
             if int(safe_score3) > int(Highscore3) and Todesart != 0:
                     Highscore3 = safe_score3
-                    d = shelve.open('score.txt')  # here you will save the score variable   
-                    d['Highscore3'] = Highscore3          # thats all, now it is saved on disk.
+                    d = shelve.open('score.txt')
+                    d['Highscore3'] = Highscore3          
                     d.close()
 
 
@@ -523,9 +523,9 @@ def play_upside_down(): #Umgedrehte Steuerung
 
 
         Feldrahmen_rect = pygame.Rect(75,75,610,610)        
-        pygame.draw.rect(screen, (79, 70, 65), Feldrahmen_rect, 0) #((205,198,115),Feld_rect)
+        pygame.draw.rect(screen, (79, 70, 65), Feldrahmen_rect, 0)
         Feld_rect = pygame.Rect(80,80,600,600)
-        pygame.draw.rect(screen, (205,198,115), Feld_rect, 0) #((205,198,115),Feld_rect)
+        pygame.draw.rect(screen, (205,198,115), Feld_rect, 0)
 
         if Level == 3:
             countdown_text = get_font(40).render(f'{int(countdown/60)}', True, (255, 0, 0))
@@ -537,21 +537,21 @@ def play_upside_down(): #Umgedrehte Steuerung
 
 
         main_game.Malen()
-        pygame.display.update() #Updatet nach jedem while loop
-        clock.tick(FPS) #updatet 60x pro sekunde
+        pygame.display.update()
+        clock.tick(FPS) 
         if Todesart != 0:
             spielen = False
             restart()  
             main_game.Highscore()
 
 def laden():
-    global loading_states, Highscore1, Highscore2, Highscore3, Sterne_lvl_1, Sterne_lvl_2
+    global loading_states, Highscore1, Highscore2, Highscore3, Sterne_lvl_1, Sterne_lvl_2, is_Ton_an
     if loading_states:
             d = shelve.open('score.txt')
             if 'Highscore1' in d:
                 Highscore1 = d['Highscore1']
             else: Highscore1 = str(0)
-            if 'Highscore2' in d:  # the score is read from disk
+            if 'Highscore2' in d: 
                 Highscore2 = d['Highscore2']
             else: Highscore2 = str(0)
             if 'Highscore3' in d:  
@@ -561,6 +561,8 @@ def laden():
                 Sterne_lvl_1 = d['Sterne_lvl_1']
             if 'Sterne_lvl_2' in d:  
                 Sterne_lvl_2 = d['Sterne_lvl_2']
+            if 'is_Ton_an' in d:
+                is_Ton_an = d['is_Ton_an']
             d.close()
             loading_states = False
 
@@ -577,6 +579,7 @@ def main_menu():
             screen.blit(Wüste_BG_4, (0,0))
 
         laden()
+        Ton_aendern()
         
         MENU_MOUSE_POS = pygame.mouse.get_pos()
         MENU_TEXT = get_font(50).render("SNAKE GAME", True, (56,74,12))
@@ -620,7 +623,12 @@ def options():
     global is_Ton_an
     
     while True:
+        d = shelve.open('score.txt') 
+        d['is_Ton_an'] = is_Ton_an           
+        d.close()
+
         screen.blit(Wüste_BG_3, (0, 0))
+        Ton_aendern()
         OPTIONS_MOUSE_POS = pygame.mouse.get_pos()
         OPTIONS_TEXT = get_font(50).render("OPTIONS", True, "#b68f40")  
         OPTIONS_RECT = OPTIONS_TEXT.get_rect(center = (380, 75))
@@ -635,10 +643,10 @@ def options():
         MAIN_MENU_BUTTON = Button(image = pygame.image.load("Hintergrund/Options Rect.png"), pos = (380, 575), 
                     text_input = "Back", font = get_font(50), base_color="#d7fcd4", hovering_color = "White")
         if is_Ton_an:
-            TON_BUTTON = Button(image = pygame.image.load('Sprites/Ton_an.png'), pos = (700, 715),
+            TON_BUTTON = Button(image = pygame.image.load('Sprites/Ton_aus.png'), pos = (700, 715),
                     text_input = '', font = get_font(50), base_color="#d7fcd4", hovering_color = "White")    # Ton kann aus- oder anggeschaltet werden werden
         else:
-            TON_BUTTON = Button(image = pygame.image.load('Sprites/Ton_aus.png'), pos = (700, 715),
+            TON_BUTTON = Button(image = pygame.image.load('Sprites/Ton_an.png'), pos = (700, 715),
                     text_input = '', font = get_font(50), base_color="#d7fcd4", hovering_color = "White")
 
 
@@ -670,6 +678,8 @@ def options():
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if TON_BUTTON.checkForInput(OPTIONS_MOUSE_POS):
                     button_sound.play()
+                    if is_Ton_an: is_Ton_an = False
+                    else: is_Ton_an = True
                     Ton_aendern()
 
         pygame.display.update()  
@@ -677,12 +687,10 @@ def options():
 def Ton_aendern():
     global is_Ton_an
     if is_Ton_an:
-        is_Ton_an = False
         button_sound.set_volume(0)
         fail_sound.set_volume(0)
         main_game.schlange.oneup.set_volume(0)
     else:
-        is_Ton_an = True
         button_sound.set_volume(0.4)
         fail_sound.set_volume(0.8)
         main_game.schlange.oneup.set_volume(0.3)
@@ -834,7 +842,6 @@ def level():
         LEVEL_MOUSE_POS = pygame.mouse.get_pos()
         unlock_3()
         Sternanzeige()
-
         level1_rect = level_1.get_rect(center = (230, 330))
         screen.blit(level_1, level1_rect)
         if Level == 1:
@@ -1046,9 +1053,9 @@ Cactus_4 = pygame.image.load('Sprites/cactus_4.png').convert_alpha()
 
 #Startoptions
 Farbe = 'Blau'
-Level = 1 ######Ändern auf 1
-Sterne_lvl_1 = 3
-Sterne_lvl_2 = 3
+Level = 1 
+Sterne_lvl_1 = 0
+Sterne_lvl_2 = 0
 es_score = 0
 level3_is_unlocked = False
 is_Ton_an = True
@@ -1067,6 +1074,3 @@ loading_states = True
 main_game = MAIN()
 
 main_menu() #Start mit dem Main Menu
-
-#To-Do
-#Desktop app
