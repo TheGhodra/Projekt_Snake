@@ -243,6 +243,7 @@ class MAIN:
         self.hindernisse = Hindernisse()
         self.silver_trophy = pygame.image.load('Sprites/silver_trophy.png').convert_alpha()
         self.gold_trophy = pygame.image.load('Sprites/gold_trophy.png').convert_alpha()
+        self.rage_trophy = pygame.image.load('Sprites/mad_face.png').convert_alpha()
 
     def Update(self):
         self.schlange.Schlange_bewegen()
@@ -387,7 +388,7 @@ class MAIN:
                     d.close()
                     
         if Level == 3:
-            trophy = self.gold_trophy
+            trophy = self.rage_trophy
             Highscore = Highscore3
             if int(safe_score3) > int(Highscore3) and Todesart != 0:
                     Highscore3 = safe_score3
@@ -1069,4 +1070,3 @@ main_menu() #Start mit dem Main Menu
 
 #To-Do
 #Desktop app
-#level 3 Score suchen
