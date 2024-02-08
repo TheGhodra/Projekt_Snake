@@ -224,7 +224,7 @@ class Hindernisse:
                 self.x = random.randint(2, Anzahl_Zellen - 1)
                 self.y = random.randint(2, Anzahl_Zellen - 1)
                 self.pos = Vector2(self.x,self.y)
-                if self.pos in self.schlange.body or self.pos == self.frucht.Fruchtliste[-1] or self.pos in self.Hindernisliste: #Wenn hindernisse in Schlange nochamal oder in Frucht
+                if self.pos in self.schlange.body or self.pos == self.frucht.Fruchtliste[-1] or self.pos in self.Hindernisliste or self.pos == (self.schlange.body[0] + Vector2(1,0)) or self.pos == (self.schlange.body[0] + Vector2(-1,0)) or self.pos == (self.schlange.body[0] + Vector2(0,1)) or self.pos == (self.schlange.body[0] + Vector2(0,-1)): 
                     continue
                 else: 
                     self.securepos = self.pos
@@ -274,11 +274,11 @@ class MAIN:
         
         if Level == 2 or Level == 3:
             for Körperteil in self.schlange.body[1:]:
-                if Körperteil == self.hindernisse.securepos or self.hindernisse.securepos == (self.schlange.body[0] + self.schlange.Richtung):
+                if Körperteil == self.hindernisse.securepos:
                     del self.hindernisse.Hindernisliste[-1]
                     self.hindernisse.random_hindernisse()
         
-            if self.frucht.Fruchtliste[-2] in self.hindernisse.Hindernisliste:
+            if self.frucht.Fruchtliste[-2] in self.hindernisse.Hindernisliste or self.frucht.Fruchtliste[-2] == (self.hindernisse.Hindernisliste[-1] + Vector2(1,0)) or self.frucht.Fruchtliste[-2] == (self.hindernisse.Hindernisliste[-1] + Vector2(-1,0)) or self.frucht.Fruchtliste[-2] == (self.hindernisse.Hindernisliste[-1] + Vector2(0,1)) or self.frucht.Fruchtliste[-2] == (self.hindernisse.Hindernisliste[-1] + Vector2(0,-1)):
                 self.frucht.random_fruit()                            
                 
     def check_fail(self): # Schlange trifft sich selbst oder rand, Spiel wird beendet
@@ -366,7 +366,6 @@ class MAIN:
 
     def Highscore(self):
         global safe_score1, Highscore1, safe_score2, Highscore2, Level, Highscore3, safe_score3
-
 
         if Level == 1:
 
@@ -942,7 +941,6 @@ def restart():
         drei_bekommen_rect = drei_bekommen_Text.get_rect(center = (380, 160))   
 
         if Level == 1:
-            print(Sterne_lvl_1,'    ', Anzahl_Sterne)
             if Sterne_lvl_1 == 0 and Anzahl_Sterne == 0: screen.blit(bis_1_stern_Text, bis_1_stern_rect)
             elif Sterne_lvl_1 == 1 and Anzahl_Sterne < 2: screen.blit(bis_2_stern_Text, bis_2_stern_rect)
             elif Sterne_lvl_1 == 2 and Anzahl_Sterne < 3: screen.blit(bis_3_stern_Text, bis_3_stern_rect)
