@@ -277,8 +277,7 @@ class MAIN:
                 if Körperteil == self.hindernisse.securepos:
                     del self.hindernisse.Hindernisliste[-1]
                     self.hindernisse.random_hindernisse()
-        
-            if self.frucht.Fruchtliste[-2] in self.hindernisse.Hindernisliste or self.frucht.Fruchtliste[-2] == (self.hindernisse.Hindernisliste[-1] + Vector2(1,0)) or self.frucht.Fruchtliste[-2] == (self.hindernisse.Hindernisliste[-1] + Vector2(-1,0)) or self.frucht.Fruchtliste[-2] == (self.hindernisse.Hindernisliste[-1] + Vector2(0,1)) or self.frucht.Fruchtliste[-2] == (self.hindernisse.Hindernisliste[-1] + Vector2(0,-1)):
+            if (self.frucht.Fruchtliste[-2] in self.hindernisse.Hindernisliste) or self.frucht.Fruchtliste[-2] == (self.hindernisse.securepos + Vector2(1,0)) or self.frucht.Fruchtliste[-2] == (self.hindernisse.securepos + Vector2(-1,0)) or self.frucht.Fruchtliste[-2] == (self.hindernisse.securepos + Vector2(0,1)) or self.frucht.Fruchtliste[-2] == (self.hindernisse.securepos + Vector2(0,-1)):
                 self.frucht.random_fruit()                            
                 
     def check_fail(self): # Schlange trifft sich selbst oder rand, Spiel wird beendet
@@ -1067,7 +1066,8 @@ def restart():
                 pygame.quit()
                 sys.exit()
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_SPACE:
+                if event.key == pygame.K_SPACE:            
+                    main_game.hindernisse.random_hindernisse()
                     play()
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if RESTART_BUTTON.checkForInput(DEATH_MOUSE_POS):
