@@ -942,9 +942,10 @@ def restart():
         drei_bekommen_rect = drei_bekommen_Text.get_rect(center = (380, 160))   
 
         if Level == 1:
+            print(Sterne_lvl_1,'    ', Anzahl_Sterne)
             if Sterne_lvl_1 == 0 and Anzahl_Sterne == 0: screen.blit(bis_1_stern_Text, bis_1_stern_rect)
-            elif (Sterne_lvl_1 == 1 and Anzahl_Sterne <= 1): screen.blit(bis_2_stern_Text, bis_2_stern_rect)
-            elif Sterne_lvl_1 == 2 and Anzahl_Sterne <= 2: screen.blit(bis_3_stern_Text, bis_3_stern_rect)
+            elif Sterne_lvl_1 == 1 and Anzahl_Sterne < 2: screen.blit(bis_2_stern_Text, bis_2_stern_rect)
+            elif Sterne_lvl_1 == 2 and Anzahl_Sterne < 3: screen.blit(bis_3_stern_Text, bis_3_stern_rect)
             elif Sterne_lvl_1 == 0 and Anzahl_Sterne == 1: Sterne_lvl_1 = 1
             elif Sterne_lvl_1 == 0 and Anzahl_Sterne == 2: Sterne_lvl_1 = 2
             elif Sterne_lvl_1 == 0 and Anzahl_Sterne == 3: Sterne_lvl_1 = 3
@@ -1003,7 +1004,6 @@ def restart():
                 if RESTART_BUTTON.checkForInput(DEATH_MOUSE_POS):
                     button_sound.play()
                     main_game.hindernisse.random_hindernisse()
-                    Sterne_lvl_1 = int(es_score)
                     play()
                 if MAIN_MENU_BUTTON.checkForInput(DEATH_MOUSE_POS):
                     button_sound.play()
