@@ -352,9 +352,11 @@ class MAIN:
                         pygame.draw.rect(screen,GRAS_FARBE,grass_rect)
 
     def Score(self):
-        global current_score
+        global current_score, Level
         current_score = str(len(self.schlange.body) - 3) #score startet nicht bei 3
-        score_surface = SCHRIFTART.render(current_score, True, (56,74,12))
+        if Level == 1 or Level == 2:
+            score_surface = SCHRIFTART.render(current_score, True, (56,74,12))
+        else: score_surface = SCHRIFTART.render(current_score, True, (255,255,255))
         score_x = int(340) #Wo Score Anzeige
         score_y = int(40)
         score_rect = score_surface.get_rect(center = (score_x,score_y)) #Macht ein rectangle um den Score, und platziert mittif davon
@@ -396,7 +398,8 @@ class MAIN:
                     d.close()
 
 
-        highscore_surface = SCHRIFTART.render(Highscore, True, (56,74,12))
+        if Level == 1 or Level == 2: highscore_surface = SCHRIFTART.render(Highscore, True, (56,74,12))
+        else: highscore_surface = SCHRIFTART.render(Highscore, True, (255,255,255))
         highscore_x = int(440) #Wo Score Anzeige
         highscore_y = int(40)
 
@@ -567,7 +570,7 @@ def laden():
 
 def main_menu():
     pygame.display.set_caption("Main Menu")
-    global Todesart
+    global Todesart, is_unlocked_screen, Level
     
     while True:
         if Level == 1:
@@ -579,10 +582,18 @@ def main_menu():
 
         laden()
         Ton_aendern()
-        
+        if level3_is_unlocked and is_unlocked_screen == False:
+            unlock_screen()
+
         MENU_MOUSE_POS = pygame.mouse.get_pos()
-        MENU_TEXT = get_font(50).render("SNAKE GAME", True, (56,74,12))
-        MENU_RECT = MENU_TEXT.get_rect(center = (380, 100))
+        if Level == 1 or Level == 2:
+            MENU_TEXT = get_font(50).render("SNAKE GAME", True, (56,74,12))
+            MENU_RECT = MENU_TEXT.get_rect(center = (380, 100))
+            screen.blit(MENU_TEXT, MENU_RECT)
+        else:
+            MENU_TEXT = get_font(50).render("SNAKE GAME", True, (255,255,255))
+            MENU_RECT = MENU_TEXT.get_rect(center = (380, 100))
+            screen.blit(MENU_TEXT, MENU_RECT)
 
         PLAY_BUTTON = Button(image = pygame.image.load("Hintergrund/Options Rect.png"), pos = (380, 250), 
                             text_input = "Play", font = get_font(50), base_color="#d7fcd4", hovering_color = "White")
@@ -590,8 +601,6 @@ def main_menu():
                             text_input="Options", font = get_font(50), base_color="#d7fcd4", hovering_color = "White")
         QUIT_BUTTON = Button(image = pygame.image.load("Hintergrund/Options Rect.png"), pos = (380, 500), 
                             text_input = "Quit", font = get_font(50), base_color="#d7fcd4", hovering_color = "White")
-
-        screen.blit(MENU_TEXT, MENU_RECT)
 
         for button in [PLAY_BUTTON, OPTIONS_BUTTON, QUIT_BUTTON]:
             button.changeColor(MENU_MOUSE_POS)
@@ -616,6 +625,60 @@ def main_menu():
                     sys.exit()
 
         pygame.display.update()
+
+def unlock_screen():
+    global is_unlocked_screen
+    pygame.display.set_caption("Level 3 unlocked")
+    is_unlocked_screen = True
+    while True:
+        screen.blit(Wüste_BG_4, (0,0))
+        UNLOCK_MOUSE_POS = pygame.mouse.get_pos()
+        UNLOCK_TITLE = get_font(50).render("WARNING", True, (255,255,255))
+        UNLOCK_TITLE_RECT = UNLOCK_TITLE.get_rect(center = (380, 100))
+        screen.blit(UNLOCK_TITLE, UNLOCK_TITLE_RECT)
+        #Pygame doesnt support multiline :(
+        UNLOCK_TEXT1 = get_font(20).render("Master of the serpent, ", True, (255,255,255))
+        UNLOCK_TEXT1_RECT = UNLOCK_TEXT1.get_rect(center = (380, 200))
+        screen.blit(UNLOCK_TEXT1, UNLOCK_TEXT1_RECT)
+        UNLOCK_TEXT2 = get_font(20).render("you've conquered every challenge,", True, (255,255,255))
+        UNLOCK_TEXT2_RECT = UNLOCK_TEXT2.get_rect(center = (380, 225))
+        screen.blit(UNLOCK_TEXT2, UNLOCK_TEXT2_RECT)
+        UNLOCK_TEXT3 = get_font(20).render("eating pellets with finesse ", True, (255,255,255))
+        UNLOCK_TEXT3_RECT = UNLOCK_TEXT3.get_rect(center = (380, 250))
+        screen.blit(UNLOCK_TEXT3, UNLOCK_TEXT3_RECT)
+        UNLOCK_TEXT4 = get_font(20).render("and navigating mazes with precision.", True, (255,255,255))
+        UNLOCK_TEXT4_RECT = UNLOCK_TEXT4.get_rect(center = (380, 275))
+        screen.blit(UNLOCK_TEXT4, UNLOCK_TEXT4_RECT)
+        UNLOCK_TEXT5 = get_font(20).render("Now, at the peak of your journey,", True, (255,255,255))
+        UNLOCK_TEXT5_RECT = UNLOCK_TEXT5.get_rect(center = (380, 300))
+        screen.blit(UNLOCK_TEXT5, UNLOCK_TEXT5_RECT)
+        UNLOCK_TEXT6 = get_font(20).render("the ultimate trial beckons.", True, (255,255,255))
+        UNLOCK_TEXT6_RECT = UNLOCK_TEXT6.get_rect(center = (380, 325))
+        screen.blit(UNLOCK_TEXT6, UNLOCK_TEXT6_RECT)
+
+        GO_BUTTON = Button(image = pygame.image.load("Hintergrund/UNLOCK Rect.png"), pos = (380, 500), 
+                            text_input = "Ultimate Challenge", font = get_font(28), base_color="#d7fcd4", hovering_color = "Red")
+        BACK_BUTTON = Button(image = pygame.image.load("Hintergrund/Options Rect.png"), pos = (380, 600), 
+                            text_input = "Back", font = get_font(50), base_color="#d7fcd4", hovering_color = "White")
+
+        for button in [GO_BUTTON, BACK_BUTTON]:
+            button.changeColor(UNLOCK_MOUSE_POS)
+            button.update(screen)
+        
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if GO_BUTTON.checkForInput(UNLOCK_MOUSE_POS):
+                    button_sound.play()
+                    level()
+                if BACK_BUTTON.checkForInput(UNLOCK_MOUSE_POS):
+                    button_sound.play()
+                    main_menu()
+        
+        pygame.display.update()
+
 
 def options():
     pygame.display.set_caption("Options")
@@ -910,7 +973,7 @@ def level():
         pygame.display.update()     
 
 def restart():
-    global es_score, Sterne_lvl_1, Sterne_lvl_2
+    global es_score, Sterne_lvl_1, Sterne_lvl_2, Level
     fail_sound.play()
     pygame.display.set_caption("Exit Menu")
     meme_suicide = pygame.image.load('Memes\eating ys.jpg').convert_alpha()
@@ -922,14 +985,22 @@ def restart():
         elif Level == 2: screen.blit(Wüste_BG_2,(0,0))
         else: screen.blit(Wüste_BG_4,(0,0))
 
-        DEATH_TEXT = get_font(50).render("You DIED", True, (56,74,12))
-        DEATH_RECT = DEATH_TEXT.get_rect(center = (380, 75))
-        screen.blit(DEATH_TEXT, DEATH_RECT)
+        if Level == 1 or Level == 2:
+            DEATH_TEXT = get_font(50).render("You DIED", True, (56,74,12))
+            DEATH_RECT = DEATH_TEXT.get_rect(center = (380, 75))
+            screen.blit(DEATH_TEXT, DEATH_RECT)
+            STAR_TEXT = get_font(20).render(f'You achieved a score of {es_score}', True, (56,74,12))
+            STAR_TEXT_RECT = STAR_TEXT.get_rect(center = (380, 120))
+            screen.blit(STAR_TEXT, STAR_TEXT_RECT) 
+        else: 
+            DEATH_TEXT = get_font(50).render("You DIED", True, (255,255,255))
+            DEATH_RECT = DEATH_TEXT.get_rect(center = (380, 75))
+            screen.blit(DEATH_TEXT, DEATH_RECT)
+            STAR_TEXT = get_font(20).render(f'You achieved a score of {es_score}', True, (255,255,255))
+            STAR_TEXT_RECT = STAR_TEXT.get_rect(center = (380, 120))
+            screen.blit(STAR_TEXT, STAR_TEXT_RECT) 
 
-        STAR_TEXT = get_font(20).render(f'You achieved a score of {es_score}', True, (56,74,12))
-        STAR_TEXT_RECT = STAR_TEXT.get_rect(center = (380, 120))
-        screen.blit(STAR_TEXT, STAR_TEXT_RECT) 
-      
+
         Anzahl_Sterne = int(int(es_score)/10)
         bis_1_stern_Text = get_font(17).render(f'You need {10-int(es_score)} points more for 1 star', True, (56,74,12))
         bis_1_stern_rect = bis_1_stern_Text.get_rect(center = (380, 160))
@@ -1056,6 +1127,7 @@ Sterne_lvl_1 = 0
 Sterne_lvl_2 = 0
 es_score = 0
 level3_is_unlocked = False
+is_unlocked_screen = False
 is_Ton_an = True
 
 countdown = 600
